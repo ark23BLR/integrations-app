@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": false,
+    "emitDecoratorMetadata": false,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "outDir": "built",
+    "strict": true,
+    "alwaysStrict": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "baseUrl": "./",
+    "paths": {
+      "generated/*": ["./generated/*"]
+    },
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["@types", "node_modules/@types"]
+  }
+}
