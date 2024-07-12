@@ -11,63 +11,85 @@ export const UserRepositoriesInfo = gql`
             id
           }
           isPrivate
-          object(expression: "master:") {
-            ... on Tree {
-              __typename
-              entries {
-                path
-                name
-                extension
-                type
-                object {
+          defaultBranchRef {
+            __typename
+            target {
+              ... on Commit {
+                __typename
+                tree {
                   ... on Tree {
+                    __typename
                     entries {
                       path
                       name
                       extension
                       type
                       object {
+                        __typename
                         ... on Tree {
+                          __typename
                           entries {
                             path
                             name
                             extension
                             type
                             object {
+                              __typename
                               ... on Tree {
+                                __typename
                                 entries {
                                   path
                                   name
                                   extension
                                   type
                                   object {
+                                    __typename
                                     ... on Tree {
+                                      __typename
                                       entries {
                                         path
                                         name
                                         extension
                                         type
                                         object {
+                                          __typename
                                           ... on Tree {
+                                            __typename
                                             entries {
                                               path
                                               name
                                               extension
                                               type
                                               object {
+                                                __typename
                                                 ... on Tree {
+                                                  __typename
                                                   entries {
                                                     path
                                                     name
                                                     extension
                                                     type
                                                     object {
+                                                      __typename
                                                       ... on Tree {
+                                                        __typename
                                                         entries {
                                                           path
                                                           name
                                                           extension
                                                           type
+                                                          object {
+                                                            __typename
+                                                            ... on Tree {
+                                                              __typename
+                                                              entries {
+                                                                path
+                                                                name
+                                                                extension
+                                                                type
+                                                              }
+                                                            }
+                                                          }
                                                         }
                                                       }
                                                     }

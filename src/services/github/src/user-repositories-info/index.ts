@@ -13,9 +13,9 @@ import type {
 } from "generated/resolvers";
 import type { AppContext } from "../common/types/app-context";
 import {
-  getRepositoryInfoByGitTree,
-  isGitTree,
-} from "./helpers/get-repository-info-by-git-tree";
+  getRepositoryInfoByGitCommit,
+  isGitCommit,
+} from "./helpers/get-repository-info-by-git-commit";
 import { YmlFileContentSchema } from "./validation-schemas/yml-file-content";
 
 export const typeDefs = gql`
@@ -236,9 +236,11 @@ export const resolvers: Resolvers = {
           userRepositoriesInfoResponse.repositories.push(
             ...userRepositoriesMainInfoResponse.viewer.repositories.nodes
               .filter(Boolean)
-              .map(({ name, owner, isPrivate, object }) => {
-                const { filesCount, ymlFilePath } = isGitTree(object)
-                  ? getRepositoryInfoByGitTree(object)
+              .map(({ name, owner, isPrivate, defaultBranchRef }) => {
+                const branchTarget = defaultBranchRef?.target;
+
+                const { filesCount, ymlFilePath } = isGitCommit(branchTarget)
+                  ? getRepositoryInfoByGitCommit(branchTarget)
                   : { filesCount: 0, ymlFilePath: null };
 
                 if (ymlFilePath) {
@@ -284,7 +286,7 @@ export const resolvers: Resolvers = {
       const webhooksResponses = await Promise.allSettled(
         userRepositoriesInfoResponse.repositories.map((repository) =>
           axios.get(
-            `https://api.github.com/repos/${repository.owner}/${repository.name}/hooks`,
+            `https://api.github.com/repos/${repository.owner.login}/${repository.name}/hooks`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -340,7 +342,7 @@ export const resolvers: Resolvers = {
           )
           .map((ymlFilesPromiseResult) => ymlFilesPromiseResult.value)
           .filter((ymlFile) =>
-            ymlFile.url.includes(`${repository.owner}/${repository.name}`)
+            ymlFile.url.includes(`${repository.owner.login}/${repository.name}`)
           );
 
         if (matchedYmlFile) {

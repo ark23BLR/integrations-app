@@ -31608,7 +31608,7 @@ export type UserRepositoriesInfoQueryVariables = Exact<{
 }>;
 
 
-export type UserRepositoriesInfoQuery = { __typename?: 'Query', viewer: { __typename?: 'User', repositories: { __typename?: 'RepositoryConnection', nodes?: Array<{ __typename?: 'Repository', name: string, isPrivate: boolean, owner: { __typename?: 'Organization', login: string, id: string } | { __typename?: 'User', login: string, id: string }, object?: { __typename?: 'Blob' } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename?: 'Blob' } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename?: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename?: 'Blob' } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename?: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename?: 'Blob' } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename?: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename?: 'Blob' } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename?: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename?: 'Blob' } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename?: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename?: 'Blob' } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename?: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename?: 'Blob' } | { __typename?: 'Commit' } | { __typename?: 'Tag' } | { __typename?: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null } | null> | null, edges?: Array<{ __typename?: 'RepositoryEdge', cursor: string } | null> | null } } };
+export type UserRepositoriesInfoQuery = { __typename?: 'Query', viewer: { __typename?: 'User', repositories: { __typename?: 'RepositoryConnection', nodes?: Array<{ __typename?: 'Repository', name: string, isPrivate: boolean, owner: { __typename?: 'Organization', login: string, id: string } | { __typename?: 'User', login: string, id: string }, defaultBranchRef?: { __typename: 'Ref', target?: { __typename?: 'Blob' } | { __typename: 'Commit', tree: { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } } | { __typename?: 'Tag' } | { __typename?: 'Tree' } | null } | null } | null> | null, edges?: Array<{ __typename?: 'RepositoryEdge', cursor: string } | null> | null } } };
 
 export type UserRepositoriesListQueryVariables = Exact<{
   count: Scalars['Int']['input'];
@@ -31630,63 +31630,85 @@ export const UserRepositoriesInfoDocument = gql`
           id
         }
         isPrivate
-        object(expression: "master:") {
-          ... on Tree {
-            __typename
-            entries {
-              path
-              name
-              extension
-              type
-              object {
+        defaultBranchRef {
+          __typename
+          target {
+            ... on Commit {
+              __typename
+              tree {
                 ... on Tree {
+                  __typename
                   entries {
                     path
                     name
                     extension
                     type
                     object {
+                      __typename
                       ... on Tree {
+                        __typename
                         entries {
                           path
                           name
                           extension
                           type
                           object {
+                            __typename
                             ... on Tree {
+                              __typename
                               entries {
                                 path
                                 name
                                 extension
                                 type
                                 object {
+                                  __typename
                                   ... on Tree {
+                                    __typename
                                     entries {
                                       path
                                       name
                                       extension
                                       type
                                       object {
+                                        __typename
                                         ... on Tree {
+                                          __typename
                                           entries {
                                             path
                                             name
                                             extension
                                             type
                                             object {
+                                              __typename
                                               ... on Tree {
+                                                __typename
                                                 entries {
                                                   path
                                                   name
                                                   extension
                                                   type
                                                   object {
+                                                    __typename
                                                     ... on Tree {
+                                                      __typename
                                                       entries {
                                                         path
                                                         name
                                                         extension
                                                         type
+                                                        object {
+                                                          __typename
+                                                          ... on Tree {
+                                                            __typename
+                                                            entries {
+                                                              path
+                                                              name
+                                                              extension
+                                                              type
+                                                            }
+                                                          }
+                                                        }
                                                       }
                                                     }
                                                   }
