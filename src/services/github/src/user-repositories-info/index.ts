@@ -133,7 +133,7 @@ export const typeDefs = gql`
     """
     owner: GithubRepositoryOwner!
     """
-    Repository webhooks
+    Active repository webhooks
     """
     webhooks: [Webhook!]!
     """
@@ -305,11 +305,13 @@ export const resolvers: Resolvers = {
             continue;
           }
 
-          repository.webhooks = schemaParser.decode(
-            webhooksResponses[index].value.data,
-            WebhooksSchema,
-            context.logger
-          );
+          repository.webhooks = schemaParser
+            .decode(
+              webhooksResponses[index].value.data,
+              WebhooksSchema,
+              context.logger
+            )
+            .filter((webhook) => webhook.active);
         } catch (error) {
           throw logAndReturnError({
             error,
