@@ -20,60 +20,162 @@ import { YmlFileContentSchema } from "./validation-schemas/yml-file-content";
 
 export const typeDefs = gql`
   type WebhookConfig {
+    """
+    Webhook config url
+    """
     url: String
+    """
+    Webhook config content type
+    """
     content_type: String
+    """
+    Webhook config secret
+    """
     secret: String
+    """
+    Webhook insecure ssl
+    """
     insecure_ssl: String
   }
 
   type LastWebhookResponse {
+    """
+    Last webhook response status code
+    """
     code: Int
+    """
+    Last webhook response status
+    """
     status: String
+    """
+    Last webhook response message
+    """
     message: String
   }
 
   type Webhook {
+    """
+    Webhook id
+    """
     id: Int!
+    """
+    Webhook name
+    """
     name: String!
+    """
+    Flag, which indicates if webhook is active
+    """
     active: Boolean!
+    """
+    Type of the webhook
+    """
     type: String!
+    """
+    Webhook events
+    """
     events: [String!]!
+    """
+    Webhook config
+    """
     config: WebhookConfig!
+    """
+    Timestamp, which indicates when webhook was updated
+    """
     updated_at: String!
+    """
+    Timestamp, which indicates when webhook was created
+    """
     created_at: String!
+    """
+    Webhook url
+    """
     url: String!
+    """
+    Webhook test url
+    """
     test_url: String!
+    """
+    Webhook ping url
+    """
     ping_url: String!
+    """
+    Webhook deliveries url
+    """
     deliveries_url: String
+    """
+    Last webhook response
+    """
     last_response: LastWebhookResponse!
   }
 
   type GithubRepositoryOwner {
+    """
+    Login of the github repository owner
+    """
     login: String!
+    """
+    Identifier of the github repository owner
+    """
     id: ID!
   }
 
   type GithubRepositoryInfo {
+    """
+    Repository name
+    """
     name: String!
+    """
+    Flag, which indicates if the repository is private
+    """
     isPrivate: Boolean!
+    """
+    Repository owner
+    """
     owner: GithubRepositoryOwner!
+    """
+    Repository webhooks
+    """
     webhooks: [Webhook!]!
+    """
+    Content of yml repository file, shown only if exists
+    """
     ymlFileContent: String
+    """
+    Count of existing files in the repository
+    """
     filesCount: Int!
   }
 
   type UserRepositoriesInfoOutput {
+    """
+    User repositories details
+    """
     repositories: [GithubRepositoryInfo!]!
+    """
+    Cursor of the last item
+    """
     cursor: String
   }
 
   input UserRepositoriesInfoInput {
+    """
+    Token of github user to fetch repositories details - Should not start with Bearer
+    """
     token: String!
+    """
+    Cursor to paginate through user repositories
+    """
     cursor: String
+    """
+    Max number of user repositories to fetch
+    """
     count: Int!
   }
 
   extend type RootQuery {
+    """
+    Fetches user repositories details
+    """
     userRepositoriesInfo(
       params: UserRepositoriesInfoInput!
     ): UserRepositoriesInfoOutput!
@@ -85,7 +187,7 @@ export const resolvers: Resolvers = {
     userRepositoriesInfo: async (
       _: Mutation,
       { params: { token, count, cursor } }: QueryUserRepositoriesInfoArgs,
-      context: AppContext,
+      context: AppContext
     ): Promise<UserRepositoriesInfoOutput> => {
       if (count < 1 || count > 20) {
         throw logAndReturnError({
@@ -120,7 +222,7 @@ export const resolvers: Resolvers = {
                 count: numberOfRepositoriesToFetch,
                 cursor: userRepositoriesInfoResponse.cursor ?? cursor,
               },
-              { authorization: `Bearer ${token}` },
+              { authorization: `Bearer ${token}` }
             );
 
           if (
@@ -141,7 +243,7 @@ export const resolvers: Resolvers = {
 
                 if (ymlFilePath) {
                   ymlFilesGithubUrls.push(
-                    `https://api.github.com/repos/${owner.login}/${name}/contents/${ymlFilePath}`,
+                    `https://api.github.com/repos/${owner.login}/${name}/contents/${ymlFilePath}`
                   );
                 }
 
@@ -155,12 +257,12 @@ export const resolvers: Resolvers = {
                   webhooks: [],
                   filesCount,
                 };
-              }),
+              })
           );
 
           userRepositoriesInfoResponse.cursor =
             userRepositoriesMainInfoResponse.viewer.repositories.edges?.at(
-              -1,
+              -1
             )?.cursor;
 
           if (!userRepositoriesInfoResponse.cursor) {
@@ -187,9 +289,9 @@ export const resolvers: Resolvers = {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            },
-          ),
-        ),
+            }
+          )
+        )
       );
 
       for (const [
@@ -204,7 +306,7 @@ export const resolvers: Resolvers = {
           repository.webhooks = schemaParser.decode(
             webhooksResponses[index].value.data,
             WebhooksSchema,
-            context.logger,
+            context.logger
           );
         } catch (error) {
           throw logAndReturnError({
@@ -225,26 +327,26 @@ export const resolvers: Resolvers = {
               },
             })
             .then(({ data }) =>
-              schemaParser.decode(data, YmlFileContentSchema, context.logger),
-            ),
-        ),
+              schemaParser.decode(data, YmlFileContentSchema, context.logger)
+            )
+        )
       );
 
       for (const repository of userRepositoriesInfoResponse.repositories) {
         const [matchedYmlFile] = ymlFilesResponses
           .filter(
             (ymlFilesPromiseResult) =>
-              ymlFilesPromiseResult.status === "fulfilled",
+              ymlFilesPromiseResult.status === "fulfilled"
           )
           .map((ymlFilesPromiseResult) => ymlFilesPromiseResult.value)
           .filter((ymlFile) =>
-            ymlFile.url.includes(`${repository.owner}/${repository.name}`),
+            ymlFile.url.includes(`${repository.owner}/${repository.name}`)
           );
 
         if (matchedYmlFile) {
           repository.ymlFileContent = Buffer.from(
             matchedYmlFile.content,
-            "base64",
+            "base64"
           ).toString("utf-8");
         }
       }

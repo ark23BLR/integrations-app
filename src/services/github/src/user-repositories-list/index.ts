@@ -12,28 +12,61 @@ import type {
 
 export const typeDefs = gql`
   type GithubRepositoryOwner {
+    """
+    Login of the github repository owner
+    """
     login: String!
+    """
+    Identifier of the github repository owner
+    """
     id: ID!
   }
 
   type GithubRepository {
+    """
+    Name of the github repository
+    """
     name: String!
+    """
+    Size of the repository, which is calculated in kilobytes
+    """
     size: Int!
+    """
+    Repository owner
+    """
     owner: GithubRepositoryOwner!
   }
 
   type UserRepositoriesListOutput {
+    """
+    List of user repositories
+    """
     repositories: [GithubRepository!]!
+    """
+    Cursor of the last item
+    """
     cursor: String
   }
 
   input UserRepositoriesListInput {
+    """
+    Token of github user to fetch repositories details - Should not start with Bearer
+    """
     token: String!
+    """
+    Cursor to paginate through user repositories
+    """
     cursor: String
+    """
+    Max number of user repositories to fetch
+    """
     count: Int!
   }
 
   extend type RootQuery {
+    """
+    Fetches list of user repositories
+    """
     userRepositoriesList(
       params: UserRepositoriesListInput!
     ): UserRepositoriesListOutput!
@@ -45,7 +78,7 @@ export const resolvers: Resolvers = {
     userRepositoriesList: async (
       _: Mutation,
       { params: { token, count, cursor } }: QueryUserRepositoriesListArgs,
-      context: AppContext,
+      context: AppContext
     ): Promise<UserRepositoriesListOutput> => {
       if (count < 1 || count > 20) {
         throw logAndReturnError({
@@ -62,7 +95,7 @@ export const resolvers: Resolvers = {
               count,
               cursor,
             },
-            { authorization: `Bearer ${token}` },
+            { authorization: `Bearer ${token}` }
           );
 
         if (!userRepositoriesListResponse.viewer?.repositories?.nodes) {
