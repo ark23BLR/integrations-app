@@ -1,8 +1,8 @@
 import { gql } from "apollo-server-express";
+import axios from "axios";
 import { logAndReturnError } from "../common/helpers/log-and-return-error";
 import schemaParser from "../common/helpers/schema-parser";
 import { ErrorCode } from "../common/types/error-code";
-import axios from "axios";
 import { WebhooksSchema } from "./validation-schemas/webhooks";
 import {
   getRepositoryDetailsByGitCommit,

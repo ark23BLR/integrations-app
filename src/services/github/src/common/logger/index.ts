@@ -1,6 +1,5 @@
-import { errorFormatter } from "./error-formatter";
-
 import winston from "winston";
+import { errorFormatter } from "./error-formatter";
 
 export const createLogger = () =>
   winston.createLogger({
@@ -8,7 +7,7 @@ export const createLogger = () =>
     format: winston.format.combine(
       errorFormatter(),
       winston.format.timestamp(),
-      winston.format.json(),
+      winston.format.json()
     ),
     level: "debug",
     transports: [new winston.transports.Console()],
