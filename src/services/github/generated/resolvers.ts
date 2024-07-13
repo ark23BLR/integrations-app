@@ -8939,8 +8939,8 @@ export type GithubRepository = {
   size: Scalars['Int']['output'];
 };
 
-export type GithubRepositoryInfo = {
-  __typename?: 'GithubRepositoryInfo';
+export type GithubRepositoryDetails = {
+  __typename?: 'GithubRepositoryDetails';
   filesCount: Scalars['Int']['output'];
   isPrivate: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
@@ -20083,7 +20083,7 @@ export type Query = {
   topic?: Maybe<Topic>;
   /** Lookup a user by login. */
   user?: Maybe<User>;
-  userRepositoriesInfo: UserRepositoriesInfoOutput;
+  userRepositoriesDetails: UserRepositoriesDetailsOutput;
   userRepositoriesList: UserRepositoriesListOutput;
   /** The currently authenticated user. */
   viewer: User;
@@ -20291,8 +20291,8 @@ export type QueryUserArgs = {
 
 
 /** The query root of GitHub's GraphQL interface. */
-export type QueryUserRepositoriesInfoArgs = {
-  params: UserRepositoriesInfoInput;
+export type QueryUserRepositoriesDetailsArgs = {
+  params: UserRepositoriesDetailsInput;
 };
 
 
@@ -31186,16 +31186,16 @@ export type UserListSuggestion = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
-export type UserRepositoriesInfoInput = {
+export type UserRepositoriesDetailsInput = {
   count: Scalars['Int']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
   token: Scalars['String']['input'];
 };
 
-export type UserRepositoriesInfoOutput = {
-  __typename?: 'UserRepositoriesInfoOutput';
+export type UserRepositoriesDetailsOutput = {
+  __typename?: 'UserRepositoriesDetailsOutput';
   cursor?: Maybe<Scalars['String']['output']>;
-  repositories: Array<GithubRepositoryInfo>;
+  repositories: Array<GithubRepositoryDetails>;
 };
 
 export type UserRepositoriesListInput = {
@@ -32325,7 +32325,7 @@ export type ResolversTypes = ResolversObject<{
   GitSignatureState: GitSignatureState;
   GitTimestamp: ResolverTypeWrapper<Scalars['GitTimestamp']['output']>;
   GithubRepository: ResolverTypeWrapper<GithubRepository>;
-  GithubRepositoryInfo: ResolverTypeWrapper<GithubRepositoryInfo>;
+  GithubRepositoryDetails: ResolverTypeWrapper<GithubRepositoryDetails>;
   GithubRepositoryOwner: ResolverTypeWrapper<GithubRepositoryOwner>;
   GpgSignature: ResolverTypeWrapper<Omit<GpgSignature, 'signer'> & { signer?: Maybe<ResolversTypes['User']> }>;
   GrantEnterpriseOrganizationsMigratorRoleInput: GrantEnterpriseOrganizationsMigratorRoleInput;
@@ -33342,8 +33342,8 @@ export type ResolversTypes = ResolversObject<{
   UserListItemsConnection: ResolverTypeWrapper<Omit<UserListItemsConnection, 'edges' | 'nodes'> & { edges?: Maybe<Array<Maybe<ResolversTypes['UserListItemsEdge']>>>, nodes?: Maybe<Array<Maybe<ResolversTypes['UserListItems']>>> }>;
   UserListItemsEdge: ResolverTypeWrapper<Omit<UserListItemsEdge, 'node'> & { node?: Maybe<ResolversTypes['UserListItems']> }>;
   UserListSuggestion: ResolverTypeWrapper<UserListSuggestion>;
-  UserRepositoriesInfoInput: UserRepositoriesInfoInput;
-  UserRepositoriesInfoOutput: ResolverTypeWrapper<UserRepositoriesInfoOutput>;
+  UserRepositoriesDetailsInput: UserRepositoriesDetailsInput;
+  UserRepositoriesDetailsOutput: ResolverTypeWrapper<UserRepositoriesDetailsOutput>;
   UserRepositoriesListInput: UserRepositoriesListInput;
   UserRepositoriesListOutput: ResolverTypeWrapper<UserRepositoriesListOutput>;
   UserStatus: ResolverTypeWrapper<Omit<UserStatus, 'organization' | 'user'> & { organization?: Maybe<ResolversTypes['Organization']>, user: ResolversTypes['User'] }>;
@@ -33883,7 +33883,7 @@ export type ResolversParentTypes = ResolversObject<{
   GitSignature: ResolversInterfaceTypes<ResolversParentTypes>['GitSignature'];
   GitTimestamp: Scalars['GitTimestamp']['output'];
   GithubRepository: GithubRepository;
-  GithubRepositoryInfo: GithubRepositoryInfo;
+  GithubRepositoryDetails: GithubRepositoryDetails;
   GithubRepositoryOwner: GithubRepositoryOwner;
   GpgSignature: Omit<GpgSignature, 'signer'> & { signer?: Maybe<ResolversParentTypes['User']> };
   GrantEnterpriseOrganizationsMigratorRoleInput: GrantEnterpriseOrganizationsMigratorRoleInput;
@@ -34732,8 +34732,8 @@ export type ResolversParentTypes = ResolversObject<{
   UserListItemsConnection: Omit<UserListItemsConnection, 'edges' | 'nodes'> & { edges?: Maybe<Array<Maybe<ResolversParentTypes['UserListItemsEdge']>>>, nodes?: Maybe<Array<Maybe<ResolversParentTypes['UserListItems']>>> };
   UserListItemsEdge: Omit<UserListItemsEdge, 'node'> & { node?: Maybe<ResolversParentTypes['UserListItems']> };
   UserListSuggestion: UserListSuggestion;
-  UserRepositoriesInfoInput: UserRepositoriesInfoInput;
-  UserRepositoriesInfoOutput: UserRepositoriesInfoOutput;
+  UserRepositoriesDetailsInput: UserRepositoriesDetailsInput;
+  UserRepositoriesDetailsOutput: UserRepositoriesDetailsOutput;
   UserRepositoriesListInput: UserRepositoriesListInput;
   UserRepositoriesListOutput: UserRepositoriesListOutput;
   UserStatus: Omit<UserStatus, 'organization' | 'user'> & { organization?: Maybe<ResolversParentTypes['Organization']>, user: ResolversParentTypes['User'] };
@@ -37751,7 +37751,7 @@ export type GithubRepositoryResolvers<ContextType = AppContext, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type GithubRepositoryInfoResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['GithubRepositoryInfo'] = ResolversParentTypes['GithubRepositoryInfo']> = ResolversObject<{
+export type GithubRepositoryDetailsResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['GithubRepositoryDetails'] = ResolversParentTypes['GithubRepositoryDetails']> = ResolversObject<{
   filesCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   isPrivate?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -41387,7 +41387,7 @@ export type QueryResolvers<ContextType = AppContext, ParentType extends Resolver
   sponsorables?: Resolver<ResolversTypes['SponsorableItemConnection'], ParentType, ContextType, RequireFields<QuerySponsorablesArgs, 'onlyDependencies' | 'orderBy'>>;
   topic?: Resolver<Maybe<ResolversTypes['Topic']>, ParentType, ContextType, RequireFields<QueryTopicArgs, 'name'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'login'>>;
-  userRepositoriesInfo?: Resolver<ResolversTypes['UserRepositoriesInfoOutput'], ParentType, ContextType, RequireFields<QueryUserRepositoriesInfoArgs, 'params'>>;
+  userRepositoriesDetails?: Resolver<ResolversTypes['UserRepositoriesDetailsOutput'], ParentType, ContextType, RequireFields<QueryUserRepositoriesDetailsArgs, 'params'>>;
   userRepositoriesList?: Resolver<ResolversTypes['UserRepositoriesListOutput'], ParentType, ContextType, RequireFields<QueryUserRepositoriesListArgs, 'params'>>;
   viewer?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 }>;
@@ -44902,9 +44902,9 @@ export type UserListSuggestionResolvers<ContextType = AppContext, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type UserRepositoriesInfoOutputResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['UserRepositoriesInfoOutput'] = ResolversParentTypes['UserRepositoriesInfoOutput']> = ResolversObject<{
+export type UserRepositoriesDetailsOutputResolvers<ContextType = AppContext, ParentType extends ResolversParentTypes['UserRepositoriesDetailsOutput'] = ResolversParentTypes['UserRepositoriesDetailsOutput']> = ResolversObject<{
   cursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  repositories?: Resolver<Array<ResolversTypes['GithubRepositoryInfo']>, ParentType, ContextType>;
+  repositories?: Resolver<Array<ResolversTypes['GithubRepositoryDetails']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -45450,7 +45450,7 @@ export type Resolvers<ContextType = AppContext> = ResolversObject<{
   GitSignature?: GitSignatureResolvers<ContextType>;
   GitTimestamp?: GraphQLScalarType;
   GithubRepository?: GithubRepositoryResolvers<ContextType>;
-  GithubRepositoryInfo?: GithubRepositoryInfoResolvers<ContextType>;
+  GithubRepositoryDetails?: GithubRepositoryDetailsResolvers<ContextType>;
   GithubRepositoryOwner?: GithubRepositoryOwnerResolvers<ContextType>;
   GpgSignature?: GpgSignatureResolvers<ContextType>;
   GrantEnterpriseOrganizationsMigratorRolePayload?: GrantEnterpriseOrganizationsMigratorRolePayloadResolvers<ContextType>;
@@ -46092,7 +46092,7 @@ export type Resolvers<ContextType = AppContext> = ResolversObject<{
   UserListItemsConnection?: UserListItemsConnectionResolvers<ContextType>;
   UserListItemsEdge?: UserListItemsEdgeResolvers<ContextType>;
   UserListSuggestion?: UserListSuggestionResolvers<ContextType>;
-  UserRepositoriesInfoOutput?: UserRepositoriesInfoOutputResolvers<ContextType>;
+  UserRepositoriesDetailsOutput?: UserRepositoriesDetailsOutputResolvers<ContextType>;
   UserRepositoriesListOutput?: UserRepositoriesListOutputResolvers<ContextType>;
   UserStatus?: UserStatusResolvers<ContextType>;
   UserStatusConnection?: UserStatusConnectionResolvers<ContextType>;

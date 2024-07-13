@@ -4,7 +4,7 @@ import { gql } from "apollo-server-express";
 import {
   resolvers as getUserRepositoriesResolver,
   typeDefs as getUserRepositoriesTypeDefs,
-} from "./user-repositories-info";
+} from "./user-repositories-details";
 import {
   resolvers as getUserRepositoriesListResolver,
   typeDefs as getUserRepositoriesListTypeDefs,

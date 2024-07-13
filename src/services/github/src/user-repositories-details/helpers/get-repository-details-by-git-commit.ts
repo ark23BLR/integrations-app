@@ -18,7 +18,7 @@ const isGitTree = (tree: unknown): tree is Tree => {
   );
 };
 
-const getRepositoryInfoByGitTree = (
+const getRepositoryDetailsByGitTree = (
   gitTree: Tree
 ): { filesCount: number; ymlFilePath: string | null } => {
   let filesCount = 0;
@@ -49,7 +49,7 @@ const getRepositoryInfoByGitTree = (
     const {
       filesCount: currentTreeFilesCount,
       ymlFilePath: currentTreeYmlFilePath,
-    } = getRepositoryInfoByGitTree(entry.object);
+    } = getRepositoryDetailsByGitTree(entry.object);
 
     filesCount += currentTreeFilesCount;
 
@@ -61,7 +61,7 @@ const getRepositoryInfoByGitTree = (
   return { filesCount, ymlFilePath };
 };
 
-export const getRepositoryInfoByGitCommit = (
+export const getRepositoryDetailsByGitCommit = (
   gitCommit: Commit
 ): { filesCount: number; ymlFilePath: string | null } => {
   let filesCount = 0;
@@ -96,7 +96,7 @@ export const getRepositoryInfoByGitCommit = (
     const {
       filesCount: currentTreeFilesCount,
       ymlFilePath: currentTreeYmlFilePath,
-    } = getRepositoryInfoByGitTree(entry.object);
+    } = getRepositoryDetailsByGitTree(entry.object);
 
     filesCount += currentTreeFilesCount;
 

@@ -8938,8 +8938,8 @@ export type GithubRepository = {
   size: Scalars['Int']['output'];
 };
 
-export type GithubRepositoryInfo = {
-  __typename?: 'GithubRepositoryInfo';
+export type GithubRepositoryDetails = {
+  __typename?: 'GithubRepositoryDetails';
   filesCount: Scalars['Int']['output'];
   isPrivate: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
@@ -20082,7 +20082,7 @@ export type Query = {
   topic?: Maybe<Topic>;
   /** Lookup a user by login. */
   user?: Maybe<User>;
-  userRepositoriesInfo: UserRepositoriesInfoOutput;
+  userRepositoriesDetails: UserRepositoriesDetailsOutput;
   userRepositoriesList: UserRepositoriesListOutput;
   /** The currently authenticated user. */
   viewer: User;
@@ -20290,8 +20290,8 @@ export type QueryUserArgs = {
 
 
 /** The query root of GitHub's GraphQL interface. */
-export type QueryUserRepositoriesInfoArgs = {
-  params: UserRepositoriesInfoInput;
+export type QueryUserRepositoriesDetailsArgs = {
+  params: UserRepositoriesDetailsInput;
 };
 
 
@@ -31185,16 +31185,16 @@ export type UserListSuggestion = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
-export type UserRepositoriesInfoInput = {
+export type UserRepositoriesDetailsInput = {
   count: Scalars['Int']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
   token: Scalars['String']['input'];
 };
 
-export type UserRepositoriesInfoOutput = {
-  __typename?: 'UserRepositoriesInfoOutput';
+export type UserRepositoriesDetailsOutput = {
+  __typename?: 'UserRepositoriesDetailsOutput';
   cursor?: Maybe<Scalars['String']['output']>;
-  repositories: Array<GithubRepositoryInfo>;
+  repositories: Array<GithubRepositoryDetails>;
 };
 
 export type UserRepositoriesListInput = {
@@ -31602,13 +31602,13 @@ export type WorkflowsParametersInput = {
   workflows: Array<WorkflowFileReferenceInput>;
 };
 
-export type UserRepositoriesInfoQueryVariables = Exact<{
+export type UserRepositoriesDetailsQueryVariables = Exact<{
   count: Scalars['Int']['input'];
   cursor?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type UserRepositoriesInfoQuery = { __typename?: 'Query', viewer: { __typename?: 'User', repositories: { __typename?: 'RepositoryConnection', nodes?: Array<{ __typename?: 'Repository', name: string, isPrivate: boolean, owner: { __typename?: 'Organization', login: string, id: string } | { __typename?: 'User', login: string, id: string }, defaultBranchRef?: { __typename: 'Ref', target?: { __typename?: 'Blob' } | { __typename: 'Commit', tree: { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } } | { __typename?: 'Tag' } | { __typename?: 'Tree' } | null } | null } | null> | null, edges?: Array<{ __typename?: 'RepositoryEdge', cursor: string } | null> | null } } };
+export type UserRepositoriesDetailsQuery = { __typename?: 'Query', viewer: { __typename?: 'User', repositories: { __typename?: 'RepositoryConnection', nodes?: Array<{ __typename?: 'Repository', name: string, isPrivate: boolean, owner: { __typename?: 'Organization', login: string, id: string } | { __typename?: 'User', login: string, id: string }, defaultBranchRef?: { __typename: 'Ref', target?: { __typename?: 'Blob' } | { __typename: 'Commit', tree: { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string, object?: { __typename: 'Blob' } | { __typename: 'Commit' } | { __typename: 'Tag' } | { __typename: 'Tree', entries?: Array<{ __typename?: 'TreeEntry', path?: string | null, name: string, extension?: string | null, type: string }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } | null }> | null } } | { __typename?: 'Tag' } | { __typename?: 'Tree' } | null } | null } | null> | null, edges?: Array<{ __typename?: 'RepositoryEdge', cursor: string } | null> | null } } };
 
 export type UserRepositoriesListQueryVariables = Exact<{
   count: Scalars['Int']['input'];
@@ -31619,8 +31619,8 @@ export type UserRepositoriesListQueryVariables = Exact<{
 export type UserRepositoriesListQuery = { __typename?: 'Query', viewer: { __typename?: 'User', repositories: { __typename?: 'RepositoryConnection', nodes?: Array<{ __typename?: 'Repository', name: string, diskUsage?: number | null, owner: { __typename?: 'Organization', login: string, id: string } | { __typename?: 'User', login: string, id: string } } | null> | null, edges?: Array<{ __typename?: 'RepositoryEdge', cursor: string } | null> | null } } };
 
 
-export const UserRepositoriesInfoDocument = gql`
-    query UserRepositoriesInfo($count: Int!, $cursor: String) {
+export const UserRepositoriesDetailsDocument = gql`
+    query UserRepositoriesDetails($count: Int!, $cursor: String) {
   viewer {
     repositories(first: $count, after: $cursor) {
       nodes {
@@ -31768,8 +31768,8 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    UserRepositoriesInfo(variables: UserRepositoriesInfoQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UserRepositoriesInfoQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<UserRepositoriesInfoQuery>(UserRepositoriesInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UserRepositoriesInfo', 'query', variables);
+    UserRepositoriesDetails(variables: UserRepositoriesDetailsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UserRepositoriesDetailsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UserRepositoriesDetailsQuery>(UserRepositoriesDetailsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UserRepositoriesDetails', 'query', variables);
     },
     UserRepositoriesList(variables: UserRepositoriesListQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<UserRepositoriesListQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<UserRepositoriesListQuery>(UserRepositoriesListDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UserRepositoriesList', 'query', variables);

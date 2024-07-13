@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
 
-export const UserRepositoriesInfo = gql`
-  query UserRepositoriesInfo($count: Int!, $cursor: String) {
+export const UserRepositoriesDetails = gql`
+  query UserRepositoriesDetails($count: Int!, $cursor: String) {
     viewer {
       repositories(first: $count, after: $cursor) {
         nodes {

@@ -37731,7 +37731,7 @@ type Webhook {
   last_response: LastWebhookResponse!
 }
 
-type GithubRepositoryInfo {
+type GithubRepositoryDetails {
   name: String!
   isPrivate: Boolean!
   owner: GithubRepositoryOwner!
@@ -37740,12 +37740,12 @@ type GithubRepositoryInfo {
   filesCount: Int!
 }
 
-type UserRepositoriesInfoOutput {
-  repositories: [GithubRepositoryInfo!]!
+type UserRepositoriesDetailsOutput {
+  repositories: [GithubRepositoryDetails!]!
   cursor: String
 }
 
-input UserRepositoriesInfoInput {
+input UserRepositoriesDetailsInput {
   token: String!
   cursor: String
   count: Int!
@@ -39622,9 +39622,9 @@ type Query {
     slug: String!
   ): Enterprise
 
-  userRepositoriesInfo(
-    params: UserRepositoriesInfoInput!
-  ): UserRepositoriesInfoOutput!
+  userRepositoriesDetails(
+    params: UserRepositoriesDetailsInput!
+  ): UserRepositoriesDetailsOutput!
 
   userRepositoriesList(
     params: UserRepositoriesListInput!

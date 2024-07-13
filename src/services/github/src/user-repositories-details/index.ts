@@ -8,20 +8,20 @@ import { WebhooksSchema } from "./validation-schemas/webhooks";
 import type {
   Resolvers,
   Mutation,
-  QueryUserRepositoriesInfoArgs,
-  UserRepositoriesInfoOutput,
+  QueryUserRepositoriesDetailsArgs,
+  UserRepositoriesDetailsOutput,
 } from "generated/resolvers";
 import type { AppContext } from "../common/types/app-context";
 import {
-  getRepositoryInfoByGitCommit,
+  getRepositoryDetailsByGitCommit,
   isGitCommit,
-} from "./helpers/get-repository-info-by-git-commit";
+} from "./helpers/get-repository-details-by-git-commit";
 import { YmlFileContentSchema } from "./validation-schemas/yml-file-content";
-import { UserRepositoriesInfoQuery } from "generated/index";
+import { UserRepositoriesDetailsQuery } from "generated/index";
 
 type UserRepository = NonNullable<
   NonNullable<
-    UserRepositoriesInfoQuery["viewer"]["repositories"]["nodes"]
+    UserRepositoriesDetailsQuery["viewer"]["repositories"]["nodes"]
   >[number]
 >;
 
@@ -126,7 +126,7 @@ export const typeDefs = gql`
     id: ID!
   }
 
-  type GithubRepositoryInfo {
+  type GithubRepositoryDetails {
     """
     Repository name
     """
@@ -153,18 +153,18 @@ export const typeDefs = gql`
     filesCount: Int!
   }
 
-  type UserRepositoriesInfoOutput {
+  type UserRepositoriesDetailsOutput {
     """
     User repositories details
     """
-    repositories: [GithubRepositoryInfo!]!
+    repositories: [GithubRepositoryDetails!]!
     """
     Cursor of the last item
     """
     cursor: String
   }
 
-  input UserRepositoriesInfoInput {
+  input UserRepositoriesDetailsInput {
     """
     Token of github user to fetch repositories details - Should not start with Bearer
     """
@@ -183,19 +183,19 @@ export const typeDefs = gql`
     """
     Fetches user repositories details
     """
-    userRepositoriesInfo(
-      params: UserRepositoriesInfoInput!
-    ): UserRepositoriesInfoOutput!
+    userRepositoriesDetails(
+      params: UserRepositoriesDetailsInput!
+    ): UserRepositoriesDetailsOutput!
   }
 `;
 
 export const resolvers: Resolvers = {
   RootQuery: {
-    userRepositoriesInfo: async (
+    userRepositoriesDetails: async (
       _: Mutation,
-      { params }: QueryUserRepositoriesInfoArgs,
+      { params }: QueryUserRepositoriesDetailsArgs,
       context: AppContext
-    ): Promise<UserRepositoriesInfoOutput> => {
+    ): Promise<UserRepositoriesDetailsOutput> => {
       if (params.count < 1 || params.count > 20) {
         throw logAndReturnError({
           errorCode: ErrorCode.ValidationError,
@@ -206,7 +206,7 @@ export const resolvers: Resolvers = {
 
       let fetchedRepositoriesCount = 0;
       let isCursorExhausted = false;
-      let cursor: UserRepositoriesInfoOutput["cursor"];
+      let cursor: UserRepositoriesDetailsOutput["cursor"];
 
       const ymlFilesGithubUrls: string[] = [];
       const userRepositories: UserRepository[] = [];
@@ -220,8 +220,8 @@ export const resolvers: Resolvers = {
           const numberOfRepositoriesToFetch =
             params.count - fetchedRepositoriesCount === 1 ? 1 : 2;
 
-          const userRepositoriesInfoResponse =
-            await context.sdk.UserRepositoriesInfo(
+          const userRepositoriesDetailsResponse =
+            await context.sdk.UserRepositoriesDetails(
               {
                 count: numberOfRepositoriesToFetch,
                 cursor: cursor ?? params.cursor,
@@ -229,20 +229,22 @@ export const resolvers: Resolvers = {
               { authorization: `Bearer ${params.token}` }
             );
 
-          if (!userRepositoriesInfoResponse.viewer.repositories.nodes?.length) {
+          if (
+            !userRepositoriesDetailsResponse.viewer.repositories.nodes?.length
+          ) {
             cursor = null;
             isCursorExhausted = true;
             break;
           }
 
           userRepositories.push(
-            ...userRepositoriesInfoResponse.viewer.repositories.nodes.filter(
+            ...userRepositoriesDetailsResponse.viewer.repositories.nodes.filter(
               Boolean
             )
           );
 
           cursor =
-            userRepositoriesInfoResponse.viewer.repositories.edges?.at(
+            userRepositoriesDetailsResponse.viewer.repositories.edges?.at(
               -1
             )?.cursor;
 
@@ -262,23 +264,23 @@ export const resolvers: Resolvers = {
         });
       }
 
-      const userRepositoriesInfo: UserRepositoriesInfoOutput["repositories"] =
+      const userRepositoriesDetails: UserRepositoriesDetailsOutput["repositories"] =
         [];
 
       for (const repository of userRepositories) {
         const targetBranch = repository.defaultBranchRef?.target;
 
-        const repositoryContentInfo = isGitCommit(targetBranch)
-          ? getRepositoryInfoByGitCommit(targetBranch)
+        const repositoryContentDetails = isGitCommit(targetBranch)
+          ? getRepositoryDetailsByGitCommit(targetBranch)
           : { filesCount: 0, ymlFilePath: null };
 
-        if (repositoryContentInfo) {
+        if (repositoryContentDetails) {
           ymlFilesGithubUrls.push(
-            `https://api.github.com/repos/${repository.owner.login}/${repository.name}/contents/${repositoryContentInfo.ymlFilePath}`
+            `https://api.github.com/repos/${repository.owner.login}/${repository.name}/contents/${repositoryContentDetails.ymlFilePath}`
           );
         }
 
-        userRepositoriesInfo.push({
+        userRepositoriesDetails.push({
           name: repository.name,
           owner: {
             login: repository.owner.login,
@@ -286,12 +288,12 @@ export const resolvers: Resolvers = {
           },
           isPrivate: repository.isPrivate,
           webhooks: [],
-          filesCount: repositoryContentInfo.filesCount,
+          filesCount: repositoryContentDetails.filesCount,
         });
       }
 
       const webhooksResponses = await Promise.allSettled(
-        userRepositoriesInfo.map((repository) =>
+        userRepositoriesDetails.map((repository) =>
           axios.get(
             `https://api.github.com/repos/${repository.owner.login}/${repository.name}/hooks`,
             {
@@ -304,7 +306,7 @@ export const resolvers: Resolvers = {
       );
 
       try {
-        for (const [index, repository] of userRepositoriesInfo.entries()) {
+        for (const [index, repository] of userRepositoriesDetails.entries()) {
           if (webhooksResponses[index].status === "rejected") {
             continue;
           }
@@ -340,7 +342,7 @@ export const resolvers: Resolvers = {
         )
       );
 
-      for (const repository of userRepositoriesInfo) {
+      for (const repository of userRepositoriesDetails) {
         const [matchedYmlFile] = ymlFilesResponses
           .filter(
             (ymlFilesPromiseResult) =>
@@ -360,7 +362,7 @@ export const resolvers: Resolvers = {
       }
 
       return {
-        repositories: userRepositoriesInfo,
+        repositories: userRepositoriesDetails,
         cursor,
       };
     },
