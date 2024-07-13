@@ -17,6 +17,13 @@ import {
   isGitCommit,
 } from "./helpers/get-repository-info-by-git-commit";
 import { YmlFileContentSchema } from "./validation-schemas/yml-file-content";
+import { UserRepositoriesInfoQuery } from "generated/index";
+
+type UserRepository = NonNullable<
+  NonNullable<
+    UserRepositoriesInfoQuery["viewer"]["repositories"]["nodes"]
+  >[number]
+>;
 
 export const typeDefs = gql`
   type WebhookConfig {
@@ -186,10 +193,10 @@ export const resolvers: Resolvers = {
   RootQuery: {
     userRepositoriesInfo: async (
       _: Mutation,
-      { params: { token, count, cursor } }: QueryUserRepositoriesInfoArgs,
+      { params }: QueryUserRepositoriesInfoArgs,
       context: AppContext
     ): Promise<UserRepositoriesInfoOutput> => {
-      if (count < 1 || count > 20) {
+      if (params.count < 1 || params.count > 20) {
         throw logAndReturnError({
           errorCode: ErrorCode.ValidationError,
           logger: context.logger,
@@ -197,77 +204,49 @@ export const resolvers: Resolvers = {
         });
       }
 
-      let userRepositoriesInfoResponse: UserRepositoriesInfoOutput = {
-        repositories: [],
-        cursor,
-      };
-
       let fetchedRepositoriesCount = 0;
       let isCursorExhausted = false;
+      let cursor: UserRepositoriesInfoOutput["cursor"];
 
       const ymlFilesGithubUrls: string[] = [];
+      const userRepositories: UserRepository[] = [];
 
       try {
         while (
           fetchedRepositoriesCount >= 0 &&
-          fetchedRepositoriesCount < count &&
+          fetchedRepositoriesCount < params.count &&
           !isCursorExhausted
         ) {
           const numberOfRepositoriesToFetch =
-            count - fetchedRepositoriesCount === 1 ? 1 : 2;
+            params.count - fetchedRepositoriesCount === 1 ? 1 : 2;
 
-          const userRepositoriesMainInfoResponse =
+          const userRepositoriesInfoResponse =
             await context.sdk.UserRepositoriesInfo(
               {
                 count: numberOfRepositoriesToFetch,
-                cursor: userRepositoriesInfoResponse.cursor ?? cursor,
+                cursor: cursor ?? params.cursor,
               },
-              { authorization: `Bearer ${token}` }
+              { authorization: `Bearer ${params.token}` }
             );
 
-          if (
-            !userRepositoriesMainInfoResponse.viewer.repositories.nodes?.length
-          ) {
-            userRepositoriesInfoResponse.cursor = null;
+          if (!userRepositoriesInfoResponse.viewer.repositories.nodes?.length) {
+            cursor = null;
             isCursorExhausted = true;
             break;
           }
 
-          userRepositoriesInfoResponse.repositories.push(
-            ...userRepositoriesMainInfoResponse.viewer.repositories.nodes
-              .filter(Boolean)
-              .map(({ name, owner, isPrivate, defaultBranchRef }) => {
-                const branchTarget = defaultBranchRef?.target;
-
-                const { filesCount, ymlFilePath } = isGitCommit(branchTarget)
-                  ? getRepositoryInfoByGitCommit(branchTarget)
-                  : { filesCount: 0, ymlFilePath: null };
-
-                if (ymlFilePath) {
-                  ymlFilesGithubUrls.push(
-                    `https://api.github.com/repos/${owner.login}/${name}/contents/${ymlFilePath}`
-                  );
-                }
-
-                return {
-                  name,
-                  owner: {
-                    login: owner.login,
-                    id: owner.id,
-                  },
-                  isPrivate,
-                  webhooks: [],
-                  filesCount,
-                };
-              })
+          userRepositories.push(
+            ...userRepositoriesInfoResponse.viewer.repositories.nodes.filter(
+              Boolean
+            )
           );
 
-          userRepositoriesInfoResponse.cursor =
-            userRepositoriesMainInfoResponse.viewer.repositories.edges?.at(
+          cursor =
+            userRepositoriesInfoResponse.viewer.repositories.edges?.at(
               -1
             )?.cursor;
 
-          if (!userRepositoriesInfoResponse.cursor) {
+          if (!cursor) {
             isCursorExhausted = true;
             break;
           }
@@ -283,24 +262,49 @@ export const resolvers: Resolvers = {
         });
       }
 
+      const userRepositoriesInfo: UserRepositoriesInfoOutput["repositories"] =
+        [];
+
+      for (const repository of userRepositories) {
+        const targetBranch = repository.defaultBranchRef?.target;
+
+        const repositoryContentInfo = isGitCommit(targetBranch)
+          ? getRepositoryInfoByGitCommit(targetBranch)
+          : { filesCount: 0, ymlFilePath: null };
+
+        if (repositoryContentInfo) {
+          ymlFilesGithubUrls.push(
+            `https://api.github.com/repos/${repository.owner.login}/${repository.name}/contents/${repositoryContentInfo.ymlFilePath}`
+          );
+        }
+
+        userRepositoriesInfo.push({
+          name: repository.name,
+          owner: {
+            login: repository.owner.login,
+            id: repository.owner.id,
+          },
+          isPrivate: repository.isPrivate,
+          webhooks: [],
+          filesCount: repositoryContentInfo.filesCount,
+        });
+      }
+
       const webhooksResponses = await Promise.allSettled(
-        userRepositoriesInfoResponse.repositories.map((repository) =>
+        userRepositoriesInfo.map((repository) =>
           axios.get(
             `https://api.github.com/repos/${repository.owner.login}/${repository.name}/hooks`,
             {
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${params.token}`,
               },
             }
           )
         )
       );
 
-      for (const [
-        index,
-        repository,
-      ] of userRepositoriesInfoResponse.repositories.entries()) {
-        try {
+      try {
+        for (const [index, repository] of userRepositoriesInfo.entries()) {
           if (webhooksResponses[index].status === "rejected") {
             continue;
           }
@@ -312,14 +316,14 @@ export const resolvers: Resolvers = {
               context.logger
             )
             .filter((webhook) => webhook.active);
-        } catch (error) {
-          throw logAndReturnError({
-            error,
-            logger: context.logger,
-            message: "Failed to parse repository webhooks",
-            errorCode: ErrorCode.InternalApiError,
-          });
         }
+      } catch (error) {
+        throw logAndReturnError({
+          error,
+          logger: context.logger,
+          message: "Failed to parse repository webhooks",
+          errorCode: ErrorCode.InternalApiError,
+        });
       }
 
       const ymlFilesResponses = await Promise.allSettled(
@@ -327,7 +331,7 @@ export const resolvers: Resolvers = {
           axios
             .get(ymlFileGithubUrl, {
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${params.token}`,
               },
             })
             .then(({ data }) =>
@@ -336,7 +340,7 @@ export const resolvers: Resolvers = {
         )
       );
 
-      for (const repository of userRepositoriesInfoResponse.repositories) {
+      for (const repository of userRepositoriesInfo) {
         const [matchedYmlFile] = ymlFilesResponses
           .filter(
             (ymlFilesPromiseResult) =>
@@ -355,7 +359,10 @@ export const resolvers: Resolvers = {
         }
       }
 
-      return userRepositoriesInfoResponse;
+      return {
+        repositories: userRepositoriesInfo,
+        cursor,
+      };
     },
   },
 };
