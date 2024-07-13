@@ -4,6 +4,11 @@ import schemaParser from "../common/helpers/schema-parser";
 import { ErrorCode } from "../common/types/error-code";
 import axios from "axios";
 import { WebhooksSchema } from "./validation-schemas/webhooks";
+import {
+  getRepositoryDetailsByGitCommit,
+  isGitCommit,
+} from "./helpers/get-repository-details-by-git-commit";
+import { YmlFileContentSchema } from "./validation-schemas/yml-file-content";
 
 import type {
   Resolvers,
@@ -11,19 +16,8 @@ import type {
   QueryUserRepositoriesDetailsArgs,
   UserRepositoriesDetailsOutput,
 } from "generated/resolvers";
+import type { UserRepository } from "../common/types/user-repository";
 import type { AppContext } from "../common/types/app-context";
-import {
-  getRepositoryDetailsByGitCommit,
-  isGitCommit,
-} from "./helpers/get-repository-details-by-git-commit";
-import { YmlFileContentSchema } from "./validation-schemas/yml-file-content";
-import { UserRepositoriesDetailsQuery } from "generated/index";
-
-type UserRepository = NonNullable<
-  NonNullable<
-    UserRepositoriesDetailsQuery["viewer"]["repositories"]["nodes"]
-  >[number]
->;
 
 export const typeDefs = gql`
   type WebhookConfig {
@@ -208,7 +202,6 @@ export const resolvers: Resolvers = {
       let isCursorExhausted = false;
       let cursor: UserRepositoriesDetailsOutput["cursor"];
 
-      const ymlFilesGithubUrls: string[] = [];
       const userRepositories: UserRepository[] = [];
 
       try {
@@ -266,6 +259,7 @@ export const resolvers: Resolvers = {
 
       const userRepositoriesDetails: UserRepositoriesDetailsOutput["repositories"] =
         [];
+      const ymlFilesGithubUrls: string[] = [];
 
       for (const repository of userRepositories) {
         const targetBranch = repository.defaultBranchRef?.target;
@@ -343,13 +337,13 @@ export const resolvers: Resolvers = {
       );
 
       for (const repository of userRepositoriesDetails) {
-        const [matchedYmlFile] = ymlFilesResponses
+        const matchedYmlFile = ymlFilesResponses
           .filter(
             (ymlFilesPromiseResult) =>
               ymlFilesPromiseResult.status === "fulfilled"
           )
           .map((ymlFilesPromiseResult) => ymlFilesPromiseResult.value)
-          .filter((ymlFile) =>
+          .find((ymlFile) =>
             ymlFile.url.includes(`${repository.owner.login}/${repository.name}`)
           );
 
