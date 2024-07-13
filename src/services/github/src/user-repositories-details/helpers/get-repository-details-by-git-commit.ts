@@ -68,7 +68,7 @@ export const getRepositoryDetailsByGitCommit = (
   let ymlFilePath: string | null = null;
 
   if (!gitCommit.tree?.entries?.length) {
-    return { filesCount: 0, ymlFilePath };
+    return { filesCount, ymlFilePath };
   }
 
   for (const entry of gitCommit.tree.entries) {
@@ -85,11 +85,11 @@ export const getRepositoryDetailsByGitCommit = (
       continue;
     }
 
-    if (!entry.object || !Object.keys(entry.object).length) {
-      continue;
-    }
-
-    if (!isGitTree(entry.object)) {
+    if (
+      !entry.object ||
+      !Object.keys(entry.object).length ||
+      !isGitTree(entry.object)
+    ) {
       continue;
     }
 
