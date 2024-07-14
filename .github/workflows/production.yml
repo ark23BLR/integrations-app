@@ -1,0 +1,38 @@
+name: "production"
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: ["master"]
+
+jobs:
+  lint-staged:
+    name: Linter check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+      - name: Run Linter
+        run: npm run lint
+  github-service-typecheck:
+    name: Github service typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+        working-directory: src/services/github
+      - name: Run Typescript compiler
+        run: npx tsc --noEmit
+        working-directory: src/services/github
