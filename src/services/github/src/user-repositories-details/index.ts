@@ -18,6 +18,7 @@ import type {
 } from "generated/resolvers";
 import type { UserRepository } from "../common/types/user-repository";
 import type { AppContext } from "../common/types/app-context";
+import { githubApiUrl } from "../common/constants";
 
 export const typeDefs = gql`
   type WebhookConfig {
@@ -270,7 +271,7 @@ export const resolvers: Resolvers = {
 
         if (repositoryContentDetails) {
           ymlFilesGithubUrls.push(
-            `https://api.github.com/repos/${repository.owner.login}/${repository.name}/contents/${repositoryContentDetails.ymlFilePath}`
+            `${githubApiUrl}/repos/${repository.owner.login}/${repository.name}/contents/${repositoryContentDetails.ymlFilePath}`
           );
         }
 
@@ -289,7 +290,7 @@ export const resolvers: Resolvers = {
       const webhooksResponses = await Promise.allSettled(
         userRepositoriesDetails.map((repository) =>
           axios.get(
-            `https://api.github.com/repos/${repository.owner.login}/${repository.name}/hooks`,
+            `${githubApiUrl}/repos/${repository.owner.login}/${repository.name}/hooks`,
             {
               headers: {
                 Authorization: `Bearer ${params.token}`,
