@@ -199,6 +199,8 @@ export const resolvers: Resolvers = {
         });
       }
 
+      params.token = params.token.replace(/bearer\s+/i, "");
+
       let fetchedRepositoriesCount = 0;
       let isCursorExhausted = false;
       let cursor: UserRepositoriesDetailsOutput["cursor"];

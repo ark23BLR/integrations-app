@@ -77,10 +77,10 @@ export const resolvers: Resolvers = {
   RootQuery: {
     userRepositoriesList: async (
       _: Mutation,
-      { params: { token, count, cursor } }: QueryUserRepositoriesListArgs,
+      { params }: QueryUserRepositoriesListArgs,
       context: AppContext
     ): Promise<UserRepositoriesListOutput> => {
-      if (count < 1 || count > 20) {
+      if (params.count < 1 || params.count > 20) {
         throw logAndReturnError({
           errorCode: ErrorCode.ValidationError,
           logger: context.logger,
@@ -88,15 +88,13 @@ export const resolvers: Resolvers = {
         });
       }
 
+      params.token = params.token.replace(/bearer\s+/i, "");
+
       try {
         const userRepositoriesListResponse =
-          await context.sdk.UserRepositoriesList(
-            {
-              count,
-              cursor,
-            },
-            { authorization: `Bearer ${token}` }
-          );
+          await context.sdk.UserRepositoriesList(params, {
+            authorization: `Bearer ${params.token}`,
+          });
 
         if (!userRepositoriesListResponse.viewer?.repositories?.nodes) {
           return {
