@@ -29,7 +29,7 @@ import type { AppContext } from "./common/types/app-context";
   await server.start();
   server.applyMiddleware({ app, path: "/" });
   await new Promise<void>((resolve) =>
-    httpServer.listen({ port: process.env.APP_PORT! }, resolve)
+    httpServer.listen({ port: process.env.APP_PORT! }, resolve),
   );
   console.log(`🚀 Server ready at http://localhost:${process.env.APP_PORT!}`);
 })();

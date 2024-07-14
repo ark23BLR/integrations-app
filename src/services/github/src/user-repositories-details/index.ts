@@ -189,7 +189,7 @@ export const resolvers: Resolvers = {
     userRepositoriesDetails: async (
       _: Mutation,
       { params }: QueryUserRepositoriesDetailsArgs,
-      context: AppContext
+      context: AppContext,
     ): Promise<UserRepositoriesDetailsOutput> => {
       if (params.count < 1 || params.count > 20) {
         throw logAndReturnError({
@@ -222,7 +222,7 @@ export const resolvers: Resolvers = {
                 count: numberOfRepositoriesToFetch,
                 cursor: cursor ?? params.cursor,
               },
-              { authorization: `Bearer ${params.token}` }
+              { authorization: `Bearer ${params.token}` },
             );
 
           if (
@@ -235,13 +235,13 @@ export const resolvers: Resolvers = {
 
           userRepositories.push(
             ...userRepositoriesDetailsResponse.viewer.repositories.nodes.filter(
-              Boolean
-            )
+              Boolean,
+            ),
           );
 
           cursor =
             userRepositoriesDetailsResponse.viewer.repositories.edges?.at(
-              -1
+              -1,
             )?.cursor;
 
           if (!cursor) {
@@ -273,7 +273,7 @@ export const resolvers: Resolvers = {
 
         if (repositoryContentDetails) {
           ymlFilesGithubUrls.push(
-            `${githubApiUrl}/repos/${repository.owner.login}/${repository.name}/contents/${repositoryContentDetails.ymlFilePath}`
+            `${githubApiUrl}/repos/${repository.owner.login}/${repository.name}/contents/${repositoryContentDetails.ymlFilePath}`,
           );
         }
 
@@ -297,9 +297,9 @@ export const resolvers: Resolvers = {
               headers: {
                 Authorization: `Bearer ${params.token}`,
               },
-            }
-          )
-        )
+            },
+          ),
+        ),
       );
 
       try {
@@ -312,7 +312,7 @@ export const resolvers: Resolvers = {
             .decode(
               webhooksResponses[index].value.data,
               WebhooksSchema,
-              context.logger
+              context.logger,
             )
             .filter((webhook) => webhook.active);
         }
@@ -334,26 +334,28 @@ export const resolvers: Resolvers = {
               },
             })
             .then(({ data }) =>
-              schemaParser.decode(data, YmlFileContentSchema, context.logger)
-            )
-        )
+              schemaParser.decode(data, YmlFileContentSchema, context.logger),
+            ),
+        ),
       );
 
       for (const repository of userRepositoriesDetails) {
         const matchedYmlFile = ymlFilesResponses
           .filter(
             (ymlFilesPromiseResult) =>
-              ymlFilesPromiseResult.status === "fulfilled"
+              ymlFilesPromiseResult.status === "fulfilled",
           )
           .map((ymlFilesPromiseResult) => ymlFilesPromiseResult.value)
           .find((ymlFile) =>
-            ymlFile.url.includes(`${repository.owner.login}/${repository.name}`)
+            ymlFile.url.includes(
+              `${repository.owner.login}/${repository.name}`,
+            ),
           );
 
         if (matchedYmlFile) {
           repository.ymlFileContent = Buffer.from(
             matchedYmlFile.content,
-            "base64"
+            "base64",
           ).toString("utf-8");
         }
       }

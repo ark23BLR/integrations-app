@@ -19,7 +19,7 @@ const isGitTree = (tree: unknown): tree is Tree => {
 };
 
 const getRepositoryDetailsByGitTree = (
-  gitTree: Tree
+  gitTree: Tree,
 ): { filesCount: number; ymlFilePath: string | null } => {
   let filesCount = 0;
   let ymlFilePath: string | null = null;
@@ -62,7 +62,7 @@ const getRepositoryDetailsByGitTree = (
 };
 
 export const getRepositoryDetailsByGitCommit = (
-  gitCommit: Commit
+  gitCommit: Commit,
 ): { filesCount: number; ymlFilePath: string | null } => {
   let filesCount = 0;
   let ymlFilePath: string | null = null;

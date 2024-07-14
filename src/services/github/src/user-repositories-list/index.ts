@@ -78,7 +78,7 @@ export const resolvers: Resolvers = {
     userRepositoriesList: async (
       _: Mutation,
       { params }: QueryUserRepositoriesListArgs,
-      context: AppContext
+      context: AppContext,
     ): Promise<UserRepositoriesListOutput> => {
       if (params.count < 1 || params.count > 20) {
         throw logAndReturnError({

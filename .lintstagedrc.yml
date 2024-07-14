@@ -1,4 +1,4 @@
-"**/!(parameters)/*.{ts,js,md,yml}":
+"**/*.{ts,js,md,yml}":
   - cspell --no-must-find-files --no-summary
 "**/src/**/*.ts":
   - eslint

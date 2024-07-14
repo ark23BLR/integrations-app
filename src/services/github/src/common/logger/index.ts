@@ -7,7 +7,7 @@ export const createLogger = () =>
     format: winston.format.combine(
       errorFormatter(),
       winston.format.timestamp(),
-      winston.format.json()
+      winston.format.json(),
     ),
     level: "debug",
     transports: [new winston.transports.Console()],

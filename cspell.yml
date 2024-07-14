@@ -1,0 +1,21 @@
+version: "0.2"
+enabled: true
+language: "en"
+allowCompoundWords: true
+dictionaries:
+  - "typescript"
+  - "node"
+  - "npm"
+enabledLanguageIds:
+  - "typescript"
+  - "javascript"
+  - "markdown"
+  - "yaml"
+  - "json"
+ignorePaths:
+  - ".gitignore"
+  - "generated"
+  - "node_modules"
+  - ".json"
+  - "*.yaml"
+  - "*.graphql"
