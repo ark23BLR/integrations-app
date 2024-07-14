@@ -321,7 +321,7 @@ export const resolvers: Resolvers = {
           error,
           logger: context.logger,
           message: "Failed to parse repository webhooks",
-          errorCode: ErrorCode.InternalApiError,
+          errorCode: ErrorCode.ValidationError,
         });
       }
 

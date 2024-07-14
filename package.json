@@ -3,16 +3,22 @@
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "cspell": "^8.10.4",
-    "eslint": "^9.7.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "typescript-eslint": "^7.16.0"
   },
+  "type": "module",
   "scripts": {
     "spell-check": "cspell \"**/*.{ts}\"",
     "typecheck": "tsc --noEmit",
-    "lint": "prettier -c '/*.{ts?(x),?(c)js?(x),json,y?(a)ml,md}' && eslint --ignore-path .gitignore '/*.ts'",
+    "lint": "prettier -c '**/*.{ts,?(c)js?(x),json,y?(a)ml,md}' && npx eslint .",
     "prepare": "husky",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "eslint": "^8.57.0"
   }
 }
