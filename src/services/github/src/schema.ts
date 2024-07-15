@@ -1,33 +1,9 @@
-import { mergeResolvers, mergeTypeDefs } from "@graphql-tools/merge";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { gql } from "apollo-server-express";
-import {
-  resolvers as getUserRepositoriesResolver,
-  typeDefs as getUserRepositoriesTypeDefs,
-} from "./user-repositories-details";
-import {
-  resolvers as getUserRepositoriesListResolver,
-  typeDefs as getUserRepositoriesListTypeDefs,
-} from "./user-repositories-list";
+import { buildSchema } from "type-graphql";
+import { UserRepositoriesListResolver } from "./user-repositories-list";
+import { UserRepositoriesDetailsResolver } from "./user-repositories-details";
 
-export const schema = makeExecutableSchema({
-  resolvers: mergeResolvers([
-    getUserRepositoriesResolver,
-    getUserRepositoriesListResolver,
-  ]),
-  typeDefs: mergeTypeDefs([
-    gql`
-      schema {
-        query: RootQuery
-        mutation: RootMutation
-      }
-
-      type RootQuery
-      type RootMutation {
-        _emptyQuery: String
-      }
-    `,
-    getUserRepositoriesListTypeDefs,
-    getUserRepositoriesTypeDefs,
-  ]),
-});
+export const schemaBuilder = () =>
+  buildSchema({
+    resolvers: [UserRepositoriesListResolver, UserRepositoriesDetailsResolver],
+    emitSchemaFile: false,
+  });

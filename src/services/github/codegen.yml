@@ -2,15 +2,6 @@ overwrite: true
 schema: ./schema.graphql
 
 generates:
-  # Generates types for local apollo server resolvers only
-  ./generated/resolvers.ts:
-    plugins:
-      - typescript
-      - typescript-resolvers
-    config:
-      useIndexSignature: true
-      contextType: src/common/types/app-context#AppContext
-
   ./generated/index.ts:
     documents:
       - "src/**/!(*.generated).ts"

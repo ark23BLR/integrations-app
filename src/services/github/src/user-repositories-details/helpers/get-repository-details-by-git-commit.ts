@@ -1,22 +1,6 @@
-import { Commit, Tree } from "generated/index";
+import { isGitTree } from "./type-guards/is-git-tree";
 
-export const isGitCommit = (commit: unknown): commit is Commit => {
-  return (
-    typeof commit === "object" &&
-    !!commit &&
-    "__typename" in commit &&
-    commit.__typename === "Commit"
-  );
-};
-
-const isGitTree = (tree: unknown): tree is Tree => {
-  return (
-    typeof tree === "object" &&
-    !!tree &&
-    "__typename" in tree &&
-    tree.__typename === "Tree"
-  );
-};
+import type { Commit, Tree } from "generated/index";
 
 const getRepositoryDetailsByGitTree = (
   gitTree: Tree,

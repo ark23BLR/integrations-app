@@ -37680,77 +37680,6 @@ enum PullRequestMergeMethod {
   SQUASH
 }
 
-type GithubRepositoryOwner {
-  login: String!
-  id: ID!
-}
-
-type GithubRepository {
-  name: String!
-  size: Int!
-  owner: GithubRepositoryOwner!
-}
-
-type UserRepositoriesListOutput {
-  repositories: [GithubRepository!]!
-  cursor: String
-}
-
-input UserRepositoriesListInput {
-  token: String!
-  cursor: String
-  count: Int!
-}
-
-type WebhookConfig {
-  url: String
-  content_type: String
-  secret: String
-  insecure_ssl: String
-}
-
-type LastWebhookResponse {
-  code: Int
-  status: String
-  message: String
-}
-
-type Webhook {
-  id: Int!
-  name: String!
-  active: Boolean!
-  type: String!
-  events: [String!]!
-  config: WebhookConfig!
-  updated_at: String!
-  created_at: String!
-  url: String!
-  test_url: String!
-  ping_url: String!
-  deliveries_url: String
-  last_response: LastWebhookResponse!
-}
-
-type GithubRepositoryDetails {
-  name: String!
-  isPrivate: Boolean!
-  owner: GithubRepositoryOwner!
-  webhooks: [Webhook!]!
-  ymlFileContent: String
-  filesCount: Int!
-}
-
-type UserRepositoriesDetailsOutput {
-  repositories: [GithubRepositoryDetails!]!
-  cursor: String
-}
-
-input UserRepositoriesDetailsInput {
-  token: String!
-  cursor: String
-  count: Int!
-}
-
 """
 Ways in which lists of issues can be ordered upon return.
 """
@@ -39621,14 +39550,6 @@ type Query {
     """
     slug: String!
   ): Enterprise
-
-  userRepositoriesDetails(
-    params: UserRepositoriesDetailsInput!
-  ): UserRepositoriesDetailsOutput!
-
-  userRepositoriesList(
-    params: UserRepositoriesListInput!
-  ): UserRepositoriesListOutput!
 
   """
   Look up a pending enterprise administrator invitation by invitee, enterprise and role.

@@ -8931,29 +8931,6 @@ export enum GitSignatureState {
   Valid = 'VALID'
 }
 
-export type GithubRepository = {
-  __typename?: 'GithubRepository';
-  name: Scalars['String']['output'];
-  owner: GithubRepositoryOwner;
-  size: Scalars['Int']['output'];
-};
-
-export type GithubRepositoryDetails = {
-  __typename?: 'GithubRepositoryDetails';
-  filesCount: Scalars['Int']['output'];
-  isPrivate: Scalars['Boolean']['output'];
-  name: Scalars['String']['output'];
-  owner: GithubRepositoryOwner;
-  webhooks: Array<Webhook>;
-  ymlFileContent?: Maybe<Scalars['String']['output']>;
-};
-
-export type GithubRepositoryOwner = {
-  __typename?: 'GithubRepositoryOwner';
-  id: Scalars['ID']['output'];
-  login: Scalars['String']['output'];
-};
-
 /** Represents a GPG signature on a Commit or Tag. */
 export type GpgSignature = GitSignature & {
   __typename?: 'GpgSignature';
@@ -10135,13 +10112,6 @@ export enum LanguageOrderField {
   /** Order languages by the size of all files containing the language */
   Size = 'SIZE'
 }
-
-export type LastWebhookResponse = {
-  __typename?: 'LastWebhookResponse';
-  code?: Maybe<Scalars['Int']['output']>;
-  message?: Maybe<Scalars['String']['output']>;
-  status?: Maybe<Scalars['String']['output']>;
-};
 
 /** A repository's open source license */
 export type License = Node & {
@@ -20082,8 +20052,6 @@ export type Query = {
   topic?: Maybe<Topic>;
   /** Lookup a user by login. */
   user?: Maybe<User>;
-  userRepositoriesDetails: UserRepositoriesDetailsOutput;
-  userRepositoriesList: UserRepositoriesListOutput;
   /** The currently authenticated user. */
   viewer: User;
 };
@@ -20286,18 +20254,6 @@ export type QueryTopicArgs = {
 /** The query root of GitHub's GraphQL interface. */
 export type QueryUserArgs = {
   login: Scalars['String']['input'];
-};
-
-
-/** The query root of GitHub's GraphQL interface. */
-export type QueryUserRepositoriesDetailsArgs = {
-  params: UserRepositoriesDetailsInput;
-};
-
-
-/** The query root of GitHub's GraphQL interface. */
-export type QueryUserRepositoriesListArgs = {
-  params: UserRepositoriesListInput;
 };
 
 /** Represents the client's rate limit. */
@@ -31185,30 +31141,6 @@ export type UserListSuggestion = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
-export type UserRepositoriesDetailsInput = {
-  count: Scalars['Int']['input'];
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  token: Scalars['String']['input'];
-};
-
-export type UserRepositoriesDetailsOutput = {
-  __typename?: 'UserRepositoriesDetailsOutput';
-  cursor?: Maybe<Scalars['String']['output']>;
-  repositories: Array<GithubRepositoryDetails>;
-};
-
-export type UserRepositoriesListInput = {
-  count: Scalars['Int']['input'];
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  token: Scalars['String']['input'];
-};
-
-export type UserRepositoriesListOutput = {
-  __typename?: 'UserRepositoriesListOutput';
-  cursor?: Maybe<Scalars['String']['output']>;
-  repositories: Array<GithubRepository>;
-};
-
 /** The user's description of what they're currently doing. */
 export type UserStatus = Node & {
   __typename?: 'UserStatus';
@@ -31382,31 +31314,6 @@ export type Votable = {
   viewerCanUpvote: Scalars['Boolean']['output'];
   /** Whether or not the current user has already upvoted this subject. */
   viewerHasUpvoted: Scalars['Boolean']['output'];
-};
-
-export type Webhook = {
-  __typename?: 'Webhook';
-  active: Scalars['Boolean']['output'];
-  config: WebhookConfig;
-  created_at: Scalars['String']['output'];
-  deliveries_url?: Maybe<Scalars['String']['output']>;
-  events: Array<Scalars['String']['output']>;
-  id: Scalars['Int']['output'];
-  last_response: LastWebhookResponse;
-  name: Scalars['String']['output'];
-  ping_url: Scalars['String']['output'];
-  test_url: Scalars['String']['output'];
-  type: Scalars['String']['output'];
-  updated_at: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type WebhookConfig = {
-  __typename?: 'WebhookConfig';
-  content_type?: Maybe<Scalars['String']['output']>;
-  insecure_ssl?: Maybe<Scalars['String']['output']>;
-  secret?: Maybe<Scalars['String']['output']>;
-  url?: Maybe<Scalars['String']['output']>;
 };
 
 /** A workflow contains meta information about an Actions workflow file. */
