@@ -21,8 +21,8 @@ jobs:
         run: npm install
       - name: Run Linter
         run: npm run lint
-  github-service-typecheck:
-    name: Github service typecheck
+  github-service-checks:
+    name: Github service checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -35,4 +35,7 @@ jobs:
         working-directory: src/services/github
       - name: Run Typescript compiler
         run: npx tsc --noEmit
+        working-directory: src/services/github
+      - name: Run jest unit tests
+        run: npm run test
         working-directory: src/services/github
