@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import axios from "axios";
 import { logAndReturnError } from "../common/helpers/log-and-return-error";
 import schemaParser from "../common/helpers/schema-parser";
@@ -102,7 +103,7 @@ export class UserRepositoriesDetailsResolver {
         ? getRepositoryDetailsByGitCommit(targetBranch)
         : { filesCount: 0, ymlFilePath: null };
 
-      if (repositoryContentDetails) {
+      if (repositoryContentDetails.ymlFilePath) {
         ymlFilesGithubUrls.push(
           `${githubApiUrl}/repos/${repository.owner.login}/${repository.name}/contents/${repositoryContentDetails.ymlFilePath}`,
         );
@@ -122,38 +123,29 @@ export class UserRepositoriesDetailsResolver {
 
     const webhooksResponses = await Promise.allSettled(
       userRepositoriesDetails.map((repository) =>
-        axios.get(
-          `${githubApiUrl}/repos/${repository.owner.login}/${repository.name}/hooks`,
-          {
-            headers: {
-              Authorization: `Bearer ${params.token}`,
+        axios
+          .get(
+            `${githubApiUrl}/repos/${repository.owner.login}/${repository.name}/hooks`,
+            {
+              headers: {
+                Authorization: `Bearer ${params.token}`,
+              },
             },
-          },
-        ),
+          )
+          .then(({ data }) =>
+            schemaParser.decode(data, WebhooksSchema, context.logger),
+          ),
       ),
     );
 
-    try {
-      for (const [index, repository] of userRepositoriesDetails.entries()) {
-        if (webhooksResponses[index].status === "rejected") {
-          continue;
-        }
-
-        repository.webhooks = schemaParser
-          .decode(
-            webhooksResponses[index].value.data,
-            WebhooksSchema,
-            context.logger,
-          )
-          .filter((webhook) => webhook.active);
+    for (const [index, repository] of userRepositoriesDetails.entries()) {
+      if (webhooksResponses[index].status === "rejected") {
+        continue;
       }
-    } catch (error) {
-      throw logAndReturnError({
-        error,
-        logger: context.logger,
-        message: "Failed to parse repository webhooks",
-        errorCode: ErrorCode.ValidationError,
-      });
+
+      repository.webhooks = webhooksResponses[index].value.filter(
+        (webhook) => webhook.active,
+      );
     }
 
     const ymlFilesResponses = await Promise.allSettled(
