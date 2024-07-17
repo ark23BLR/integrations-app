@@ -1,16 +1,14 @@
 import "reflect-metadata";
-import axios from "axios";
 import { logAndReturnError } from "../common/helpers/log-and-return-error";
-import schemaParser from "../common/helpers/schema-parser";
 import { ErrorCode } from "../common/types/error-code";
-import { WebhooksSchema } from "./validation-schemas/webhooks";
 import { getRepositoryDetailsByGitCommit } from "./helpers/get-repository-details-by-git-commit";
-import { YmlFileContentSchema } from "./validation-schemas/yml-file-content";
 import { githubApiUrl } from "../common/constants";
 import { Resolver, Query, Arg, Ctx } from "type-graphql";
 import { isGitCommit } from "./helpers/type-guards/is-git-commit";
 import { UserRepositoriesDetailsOutput } from "./graphql-schema-types/user-repositories-details-output";
 import { UserRepositoriesDetailsInput } from "./graphql-schema-types/user-repositories-details-input";
+import { fetchRepositoryWebhooks } from "./helpers/fetch-repository-webhooks";
+import { fetchRepositoryYmlFile } from "./helpers/fetch-repository-yml-file";
 
 import type { UserRepository } from "../common/types/user-repository";
 import type { AppContext } from "../common/types/app-context";
@@ -31,7 +29,7 @@ export class UserRepositoriesDetailsResolver {
       });
     }
 
-    params.token = params.token.replace(/bearer\s+/i, "");
+    params.token = `Bearer ${params.token.replace(/bearer\s+/i, "")}`;
 
     let fetchedRepositoriesCount = 0;
     let isCursorExhausted = false;
@@ -54,7 +52,7 @@ export class UserRepositoriesDetailsResolver {
               count: numberOfRepositoriesToFetch,
               cursor: cursor ?? params.cursor,
             },
-            { authorization: `Bearer ${params.token}` },
+            { authorization: params.token },
           );
 
         if (
@@ -123,18 +121,7 @@ export class UserRepositoriesDetailsResolver {
 
     const webhooksResponses = await Promise.allSettled(
       userRepositoriesDetails.map((repository) =>
-        axios
-          .get(
-            `${githubApiUrl}/repos/${repository.owner.login}/${repository.name}/hooks`,
-            {
-              headers: {
-                Authorization: `Bearer ${params.token}`,
-              },
-            },
-          )
-          .then(({ data }) =>
-            schemaParser.decode(data, WebhooksSchema, context.logger),
-          ),
+        fetchRepositoryWebhooks(repository, params.token, context.logger),
       ),
     );
 
@@ -150,15 +137,7 @@ export class UserRepositoriesDetailsResolver {
 
     const ymlFilesResponses = await Promise.allSettled(
       ymlFilesGithubUrls.map((ymlFileGithubUrl) =>
-        axios
-          .get(ymlFileGithubUrl, {
-            headers: {
-              Authorization: `Bearer ${params.token}`,
-            },
-          })
-          .then(({ data }) =>
-            schemaParser.decode(data, YmlFileContentSchema, context.logger),
-          ),
+        fetchRepositoryYmlFile(ymlFileGithubUrl, params.token, context.logger),
       ),
     );
 
