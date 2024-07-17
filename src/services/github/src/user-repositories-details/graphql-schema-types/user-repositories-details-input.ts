@@ -2,7 +2,9 @@ import { Field, InputType, Int } from "type-graphql";
 
 @InputType()
 export class UserRepositoriesDetailsInput {
-  @Field({ description: "Token of github user to fetch repositories details" })
+  @Field(() => String, {
+    description: "Token of github user to fetch repositories details",
+  })
   token!: string;
 
   @Field(() => String, {

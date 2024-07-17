@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import "reflect-metadata";
 
 import type { Config } from "jest";
 
@@ -15,7 +16,7 @@ const config: Config = {
       },
     ],
   },
-  testMatch: ["<rootDir>/src/**/tests/**/*.[jt]s"],
+  testMatch: ["<rootDir>/src/**/__tests__/**/*.[jt]s"],
   roots: ["<rootDir>"],
   verbose: true,
   modulePaths: ["<rootDir>"],

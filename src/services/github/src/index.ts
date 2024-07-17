@@ -4,7 +4,7 @@ import http from "http";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import { GraphQLClient } from "graphql-request";
 import { app } from "./app";
-import { schemaBuilder } from "./schema";
+import { schema } from "./schema";
 import { getSdk } from "../generated";
 import { createLogger } from "./common/logger";
 import { AppContext } from "./common/types/app-context";
@@ -12,7 +12,6 @@ import { AppContext } from "./common/types/app-context";
 (async () => {
   const httpServer = http.createServer(app);
   const logger = createLogger();
-  const schema = await schemaBuilder();
 
   const server = new ApolloServer({
     context: () => {

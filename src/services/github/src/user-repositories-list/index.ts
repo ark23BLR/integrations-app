@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { logAndReturnError } from "../common/helpers/log-and-return-error";
 import { ErrorCode } from "../common/types/error-code";
 import { Resolver, Query, Arg, Ctx } from "type-graphql";

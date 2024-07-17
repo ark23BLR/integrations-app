@@ -4,7 +4,7 @@ import { Webhook } from "./webhook";
 
 @ObjectType({ description: "Github repository details" })
 export class UserRepositoryDetails {
-  @Field({ description: "Repository name" })
+  @Field(() => String, { description: "Repository name" })
   name!: string;
 
   @Field(() => Boolean, {
