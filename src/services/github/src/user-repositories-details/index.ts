@@ -5,8 +5,8 @@ import { getRepositoryDetailsByGitCommit } from "./helpers/get-repository-detail
 import { githubApiUrl } from "../common/constants";
 import { Resolver, Query, Arg, Ctx } from "type-graphql";
 import { isGitCommit } from "./helpers/type-guards/is-git-commit";
-import { UserRepositoriesDetailsOutput } from "./graphql-schema-types/user-repositories-details-output";
-import { UserRepositoriesDetailsInput } from "./graphql-schema-types/user-repositories-details-input";
+import { UserRepositoriesDetailsOutput } from "./models/user-repositories-details-output";
+import { UserRepositoriesDetailsInput } from "./models/user-repositories-details-input";
 import { fetchRepositoryWebhooks } from "./helpers/fetch-repository-webhooks";
 import { fetchRepositoryYmlFile } from "./helpers/fetch-repository-yml-file";
 

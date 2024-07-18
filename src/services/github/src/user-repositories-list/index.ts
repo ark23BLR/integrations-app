@@ -2,8 +2,8 @@ import "reflect-metadata";
 import { logAndReturnError } from "../common/helpers/log-and-return-error";
 import { ErrorCode } from "../common/types/error-code";
 import { Resolver, Query, Arg, Ctx } from "type-graphql";
-import { UserRepositoriesListOutput } from "./graphql-schema-types/user-repositories-list-output";
-import { UserRepositoriesListInput } from "./graphql-schema-types/user-repositories-list-input";
+import { UserRepositoriesListOutput } from "./models/user-repositories-list-output";
+import { UserRepositoriesListInput } from "./models/user-repositories-list-input";
 
 import type { AppContext } from "../common/types/app-context";
 

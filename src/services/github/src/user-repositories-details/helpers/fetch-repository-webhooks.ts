@@ -3,7 +3,7 @@ import { githubApiUrl } from "../../common/constants";
 import { AppContext } from "../../common/types/app-context";
 import schemaParser from "../../common/helpers/schema-parser";
 import { WebhooksSchema } from "../validation-schemas/webhooks";
-import { UserRepositoryDetails } from "../graphql-schema-types/user-repository-details";
+import { UserRepositoryDetails } from "../models/user-repository-details";
 import { logAndReturnError } from "../../common/helpers/log-and-return-error";
 import { ErrorCode } from "../../common/types/error-code";
 
